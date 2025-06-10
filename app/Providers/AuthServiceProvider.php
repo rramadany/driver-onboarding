@@ -13,16 +13,16 @@ class AuthServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        Gate::define('manage-users', function (User $user) {
-            return $user->role === 'admin';
+        Gate::define('manage-drivers', function (User $user) {
+            return in_array($user->role, ['hr', 'supervisor', 'admin']);
         });
 
         Gate::define('approve-drivers', function (User $user) {
-            return $user->role === 'supervisor';
+            return in_array($user->role, ['supervisor', 'admin']);
         });
 
-        Gate::define('manage-drivers', function (User $user) {
-            return $user->role === 'hr';
+        Gate::define('manage-users', function (User $user) {
+            return $user->role === 'admin';
         });
     }
 }
