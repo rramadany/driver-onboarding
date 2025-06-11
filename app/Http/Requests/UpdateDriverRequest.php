@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Driver;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -26,9 +27,9 @@ class UpdateDriverRequest extends FormRequest
         $driverId = $this->driver->id;
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('drivers')->ignore($driverId)],
-            'phone_number' => ['required', 'string', 'max:255', Rule::unique('drivers')->ignore($driverId)],
-            'license_number' => ['required', 'string', 'max:255', Rule::unique('drivers')->ignore($driverId)],
+            'email' => ['required', 'email', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
+            'phone_number' => ['required', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
+            'license_number' => ['required', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
             'license_expiry_date' => ['required', 'date'],
             'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
