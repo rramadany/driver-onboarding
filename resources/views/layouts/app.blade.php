@@ -10,6 +10,8 @@
     <nav>
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ route('drivers.index') }}">Drivers</a></li>
+
             <li>
                 <span>Welcome, {{ Auth::user()->name }}</span>
             </li>
@@ -25,6 +27,22 @@
     <hr>
 
     <main>
+        @if (session('success'))
+            <div style="color: green;">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if ($errors->any())
+            <div style="color: red;">
+                <strong>Whoops! Something went wrong.</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
