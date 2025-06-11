@@ -40,4 +40,10 @@ class Driver extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
+    // Maybe I should make this a policy in the future
+    public function isEditable(): bool
+    {
+        return $this->status !== 'rejected';
+    }
+
 }
