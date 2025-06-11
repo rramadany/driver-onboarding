@@ -30,6 +30,7 @@ class UpdateDriverRequest extends FormRequest
             'phone_number' => ['required', 'string', 'max:255', Rule::unique('drivers')->ignore($driverId)],
             'license_number' => ['required', 'string', 'max:255', Rule::unique('drivers')->ignore($driverId)],
             'license_expiry_date' => ['required', 'date'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
     }
 }

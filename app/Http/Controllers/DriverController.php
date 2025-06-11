@@ -7,9 +7,11 @@ use App\Models\Driver;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
 use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DriverController extends Controller
 {
@@ -42,6 +44,12 @@ class DriverController extends Controller
         $driver = new Driver();
         $driver->fill($request->validated());
         $driver->created_by = Auth::id();
+
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('photos', 'private');
+            $driver->photo_path = $path;
+        }
+
         $driver->save();
 
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver profile created successfully.');
@@ -63,19 +71,46 @@ class DriverController extends Controller
         if (! $driver->isEditable()) {
             abort(400, 'This driver profile cannot be edited at its current state.');
         }
-        $driver->update($request->validated());
+
+        $driver->fill($request->validated());
+
+        if ($request->hasFile('photo')) {
+            if ($driver->photo_path) {
+                Storage::disk('private')->delete($driver->photo_path);
+            }
+            $path = $request->file('photo')->store('photos', 'private');
+            $driver->photo_path = $path;
+        }
+        $driver->save();
 
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver profile updated successfully.');
-
     }
 
     public function destroy(Driver $driver): RedirectResponse
     {
+        // We intentionally don't delete the images for the sake of auditability
+        // This fits nicely with the soft deletion
         $driver->delete();
 
         return redirect()->route('drivers.index')->with('success', 'Driver profile deleted successfully.');
 
     }
+
+    public function showPhoto(Driver $driver): StreamedResponse
+    {
+        if (is_null($driver->photo_path)) {
+            abort(404, 'Photo not found.');
+        }
+
+        $disk = Storage::disk('private');
+
+        if (! $disk->exists($driver->photo_path)) {
+            abort(404, 'File not found on disk.');
+        }
+
+        return $disk->response($driver->photo_path);
+    }
+
 
     public function submit(Driver $driver): RedirectResponse
     {

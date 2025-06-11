@@ -28,6 +28,7 @@ class StoreDriverRequest extends FormRequest
             'phone_number' => ['required', 'string', 'max:255', 'unique:drivers,phone_number'],
             'license_number' => ['required', 'string', 'max:255', 'unique:drivers,license_number'],
             'license_expiry_date' => ['required', 'date'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
 
     }

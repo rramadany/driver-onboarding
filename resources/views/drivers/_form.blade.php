@@ -30,5 +30,11 @@
 </div>
 <br>
 <div>
+    <label for="photo">Driver Photo</label>
+    <br>
+    <input type="file" id="photo" name="photo">
+</div>
+<br>
+<div>
     <button type="submit">{{ $submitButtonText ?? 'Submit' }}</button>
 </div>

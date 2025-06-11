@@ -6,6 +6,12 @@
     <a href="{{ route('drivers.index') }}"> < Back to All Drivers</a>
 
     <hr>
+
+    @if($driver->photo_path)
+        <h3>Driver Photo</h3>
+        <img src="{{ route('drivers.photo', ['driver' => $driver]) }}" alt="Driver photo" style="max-width: 200px; height: auto;">
+        <hr>
+    @endif
     
     <h3>Profile Information</h3>
     <p><strong>Name:</strong> {{ $driver->name }}</p>
