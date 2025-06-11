@@ -17,7 +17,6 @@ class Driver extends Model
         'phone_number',
         'license_number',
         'license_expiry_date',
-        'photo_path',
         // The rest were omitted on purpose
     ];
 

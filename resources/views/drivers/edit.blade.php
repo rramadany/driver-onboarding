@@ -3,7 +3,7 @@
 @section('content')
     <h1>Edit Driver Profile: {{ $driver->name }}</h1>
 
-    <form method="POST" action="{{ route('drivers.update', $driver) }}">
+    <form method="POST" action="{{ route('drivers.update', $driver) }}" enctype="multipart/form-data">
         @method('PUT')
         @include('drivers._form', ['submitButtonText' => 'Update Profile'])
     </form>

@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
         // We could make a guest role in the future
         Route::get('/', [DriverController::class, 'index'])->name('index');
         Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
+        Route::get('/{driver}/photo', [DriverController::class, 'showPhoto'])->name('photo');
 
     });
 });
