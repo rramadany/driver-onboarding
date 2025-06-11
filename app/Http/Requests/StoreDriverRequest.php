@@ -23,11 +23,11 @@ class StoreDriverRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:drivers,email'],
-            'phone_number' => ['required', 'string', 'max:255', 'unique:drivers,phone_number'],
-            'license_number' => ['required', 'string', 'max:255', 'unique:drivers,license_number'],
-            'license_expiry_date' => ['required', 'date'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255', 'unique:drivers,email'],
+            'phone_number' => ['nullable', 'string', 'max:255', 'unique:drivers,phone_number'],
+            'license_number' => ['nullable', 'string', 'max:255', 'unique:drivers,license_number'],
+            'license_expiry_date' => ['nullable', 'date'],
             'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
 

@@ -18,7 +18,7 @@
     <p><strong>Email:</strong> {{ $driver->email }}</p>
     <p><strong>Phone Number:</strong> {{ $driver->phone_number }}</p>
     <p><strong>License Number:</strong> {{ $driver->license_number }}</p>
-    <p><strong>License Expiry:</strong> {{ $driver->license_expiry_date->format('M d, Y') }}</p>
+    <p><strong>License Expiry:</strong> {{ $driver->license_expiry_date?->format('M d, Y') }}</p>
 
     <h3>Status Information</h3>
     <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $driver->status)) }}</p>

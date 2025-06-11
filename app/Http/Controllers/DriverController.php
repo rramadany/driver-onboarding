@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
 use App\Http\Requests\RejectDriverRequest;
+use App\Http\Requests\SubmitDriverRequest;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -113,7 +114,7 @@ class DriverController extends Controller
     }
 
 
-    public function submit(Driver $driver): RedirectResponse
+    public function submit(SubmitDriverRequest $request, Driver $driver): RedirectResponse
     {
         if (! $driver->isSubmittable()) {
             return back()->withErrors(['error' => 'This profile cannot be submitted for approval.']);
