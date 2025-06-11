@@ -42,7 +42,8 @@ class Driver extends Model
     // Maybe I should make policies in the future?
     public function isEditable(): bool
     {
-        return $this->status !== 'rejected';
+        // let's keep this a stub for now
+        return True;
     }
 
     public function isSubmittable(): bool
