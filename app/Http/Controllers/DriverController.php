@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\StoreDriverRequest;
 use App\Http\Requests\UpdateDriverRequest;
+use App\Http\Requests\RejectDriverRequest;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -114,22 +115,50 @@ class DriverController extends Controller
 
     public function submit(Driver $driver): RedirectResponse
     {
-        // Logic to change status from 'draft' to 'pending_approval'.
-        return redirect()->route('drivers.show', $driver);
+        if (! $driver->isSubmittable()) {
+            return back()->withErrors(['error' => 'This profile cannot be submitted for approval.']);
+        }
+
+        $driver->status = 'pending_approval';
+        $driver->submitted_at = now();
+        $driver->rejection_reason = null;
+        $driver->reviewed_by = null;
+        $driver->reviewed_at = null;
+        $driver->save();
+
+        return redirect()->route('drivers.show', $driver)->with('success', 'Driver submitted for approval.');
     }
 
     // --- Level 3: Supervisor and Admin actions ---
 
     public function approve(Driver $driver): RedirectResponse
     {
-        // Logic to change status to 'approved'.
-        return redirect()->route('drivers.show', $driver);
+        if (! $driver->isReviewable()) {
+            return back()->withErrors(['error' => 'This profile is not pending approval.']);
+        }
+
+        $driver->status = 'approved';
+        $driver->reviewed_by = Auth::id();
+        $driver->reviewed_at = now();
+        $driver->save();
+
+        return redirect()->route('drivers.show', $driver)->with('success', 'Driver approved successfully.');
+
     }
 
-    public function reject(Request $request, Driver $driver): RedirectResponse
+    public function reject(RejectDriverRequest $request, Driver $driver): RedirectResponse
     {
-        // Logic to change status to 'rejected' and save a reason.
-        return redirect()->route('drivers.show', $driver);
+        if (! $driver->isReviewable()) {
+            return back()->withErrors(['error' => 'This profile is not pending approval.']);
+        }
+
+        $driver->status = 'rejected';
+        $driver->rejection_reason = $request->validated()['rejection_reason'];
+        $driver->reviewed_by = Auth::id();
+        $driver->reviewed_at = now();
+        $driver->save();
+
+        return redirect()->route('drivers.show', $driver)->with('success', 'Driver rejected successfully.');
     }
 
 }

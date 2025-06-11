@@ -39,10 +39,19 @@ class Driver extends Model
         return $this->belongsTo(User::class, 'reviewed_by');
     }
 
-    // Maybe I should make this a policy in the future
+    // Maybe I should make policies in the future?
     public function isEditable(): bool
     {
         return $this->status !== 'rejected';
     }
 
+    public function isSubmittable(): bool
+    {
+        return in_array($this->status, ['draft', 'rejected']);
+    }
+
+    public function isReviewable(): bool
+    {
+        return $this->status === 'pending_approval';
+    }
 }

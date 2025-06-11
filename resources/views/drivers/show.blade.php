@@ -39,10 +39,40 @@
              <a href="{{ route('drivers.edit', $driver) }}">Edit Profile</a>
              <br><br>
         @endif
-             <form method="POST" action="{{ route('drivers.destroy', $driver) }}" onsubmit="return confirm('Are you sure you want to delete this profile?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit">Delete Profile</button>
-            </form>
+        @if($driver->isSubmittable())
+                <div>
+                    <form method="POST" action="{{ route('drivers.submit', $driver) }}">
+                        @csrf
+                        <button type="submit">Submit for Approval</button>
+                    </form>
+                </div>
+        @endif
+        <form method="POST" action="{{ route('drivers.destroy', $driver) }}" onsubmit="return confirm('Are you sure you want to delete this profile?');">
+            @csrf
+            @method('DELETE')
+            <button type="submit">Delete Profile</button>
+        </form>
     @endcan
+    @can('approve-drivers')
+            @if ($driver->isReviewable())
+                <div>
+                    <form method="POST" action="{{ route('drivers.approve', $driver) }}">
+                        @csrf
+                        <button type="submit" style="background-color: #28a745; color: white;">Approve</button>
+                    </form>
+                </div>
+                <div>
+                    <form method="POST" action="{{ route('drivers.reject', $driver) }}">
+                        @csrf
+                        <div>
+                            <label for="rejection_reason"><strong>Reason for Rejection:</strong></label>
+                            <br>
+                            <textarea name="rejection_reason" id="rejection_reason" rows="3" cols="40" required minlength="10">{{ old('rejection_reason') }}</textarea>
+                        </div>
+                        <br>
+                        <button type="submit" style="background-color: #dc3545; color: white;">Reject</button>
+                    </form>
+                </div>
+            @endif
+        @endcan
 @endsection
