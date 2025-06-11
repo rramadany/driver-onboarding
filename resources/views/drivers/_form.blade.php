@@ -29,12 +29,21 @@
     <input type="date" id="license_expiry_date" name="license_expiry_date" value="{{ old('license_expiry_date', isset($driver->license_expiry_date) ? $driver->license_expiry_date->format('Y-m-d') : '') }}">
 </div>
 <br>
-<div>
-    <label for="photo">Driver Photo</label>
+@foreach ($documentMap as $key => $details)
+    <div>
+        <label for="{{ $key }}">{{ $details['label'] }}</label>
+        <br>
+        @if (isset($driver) && $driver->{$details['column']})
+            <a href="{{ route('drivers.document.show', ['driver' => $driver, 'type' => $key]) }}" target="_blank">View Current File</a>
+            <br>
+        @else
+            <small>No file uploaded.</small>
+            <br>
+        @endif
+        <input type="file" id="{{ $key }}" name="{{ $key }}">
+    </div>
     <br>
-    <input type="file" id="photo" name="photo">
-</div>
-<br>
+@endforeach
 <div>
     <button type="submit">{{ $submitButtonText ?? 'Submit' }}</button>
 </div>

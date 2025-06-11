@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use App\Models\Driver;
 
 class StoreDriverRequest extends FormRequest
 {
@@ -22,14 +23,18 @@ class StoreDriverRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', 'unique:drivers,email'],
             'phone_number' => ['nullable', 'string', 'max:255', 'unique:drivers,phone_number'],
             'license_number' => ['nullable', 'string', 'max:255', 'unique:drivers,license_number'],
             'license_expiry_date' => ['nullable', 'date'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
 
+        foreach (array_keys(Driver::FILE_INPUT_MAP) as $inputName) {
+            $rules[$inputName] = ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'];
+        }
+
+        return $rules;
     }
 }

@@ -7,12 +7,6 @@
 
     <hr>
 
-    @if($driver->photo_path)
-        <h3>Driver Photo</h3>
-        <img src="{{ route('drivers.photo', ['driver' => $driver]) }}" alt="Driver photo" style="max-width: 200px; height: auto;">
-        <hr>
-    @endif
-    
     <h3>Profile Information</h3>
     <p><strong>Name:</strong> {{ $driver->name }}</p>
     <p><strong>Email:</strong> {{ $driver->email }}</p>
@@ -33,6 +27,32 @@
     
     <hr>
 
+    <h3>Document Status</h3>
+    <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+        <thead>
+            <tr>
+                <th>Document Type</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($documentMap as $key => $details)
+                <tr>
+                    <td>{{ $details['label'] }}</td>
+                    <td>
+                        @if ($driver->{$details['column']})
+                            <strong style="color:green;">Uploaded</strong> - 
+                            <a href="{{ route('drivers.document.show', ['driver' => $driver, 'type' => $key]) }}" target="_blank">View</a>
+                        @else
+                            <strong style="color:red;">Missing</strong>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <hr>
     @can('manage-drivers')
         <h3>Actions</h3>
         @if ($driver->isEditable())

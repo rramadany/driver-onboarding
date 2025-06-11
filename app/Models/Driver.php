@@ -20,6 +20,34 @@ class Driver extends Model
         // The rest were omitted on purpose
     ];
 
+    public const FILE_INPUT_MAP = [
+        'photo' => [
+            'column' => 'photo_path',
+            'label' => 'Driver Photo'
+        ],
+        'gov_id' => [
+            'column' => 'doc_gov_id_path',
+            'label' => 'Government ID'
+        ],
+        'residency_card' => [
+            'column' => 'doc_residency_card_path',
+            'label' => 'Residency Card'
+        ],
+        'drivers_license' => [
+            'column' => 'doc_drivers_license_path',
+            'label' => 'Driver\'s License'
+        ],
+        'non_conviction_certificate' => [
+            'column' => 'doc_non_conviction_path',
+            'label' => 'Non-Conviction Certificate'
+        ],
+        'vehicle_registration' => [
+            'column' => 'doc_vehicle_reg_path',
+            'label' => 'Vehicle Registration'
+        ],
+    ];
+
+
     protected function casts(): array
     {
         return [

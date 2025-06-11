@@ -30,7 +30,7 @@ class DriverController extends Controller
     public function show(Driver $driver): View
     {
         $driver->load('createdBy', 'reviewedBy');
-        return view('drivers.show', ['driver' => $driver]);
+        return view('drivers.show', ['driver' => $driver, 'documentMap' => Driver::FILE_INPUT_MAP]);
 
     }
 
@@ -38,7 +38,7 @@ class DriverController extends Controller
 
     public function create(): View
     {
-        return view('drivers.create');
+        return view('drivers.create', ['documentMap' => Driver::FILE_INPUT_MAP]);
     }
 
     public function store(StoreDriverRequest $request): RedirectResponse
@@ -47,10 +47,7 @@ class DriverController extends Controller
         $driver->fill($request->validated());
         $driver->created_by = Auth::id();
 
-        if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('photos', 'private');
-            $driver->photo_path = $path;
-        }
+        $this->handleFileUploads($request, $driver);
 
         $driver->save();
 
@@ -64,7 +61,7 @@ class DriverController extends Controller
             abort(400, 'This driver profile cannot be edited at its current state.');
         }
         
-        return view('drivers.edit', ['driver' => $driver]);
+        return view('drivers.edit', ['driver' => $driver, 'documentMap' => Driver::FILE_INPUT_MAP]);
 
     }
 
@@ -76,13 +73,8 @@ class DriverController extends Controller
 
         $driver->fill($request->validated());
 
-        if ($request->hasFile('photo')) {
-            if ($driver->photo_path) {
-                Storage::disk('private')->delete($driver->photo_path);
-            }
-            $path = $request->file('photo')->store('photos', 'private');
-            $driver->photo_path = $path;
-        }
+        $this->handleFileUploads($request, $driver);
+
         $driver->save();
 
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver profile updated successfully.');
@@ -98,21 +90,44 @@ class DriverController extends Controller
 
     }
 
-    public function showPhoto(Driver $driver): StreamedResponse
+    public function showDocument(Driver $driver, string $type): StreamedResponse
     {
-        if (is_null($driver->photo_path)) {
-            abort(404, 'Photo not found.');
+        if (!array_key_exists($type, Driver::FILE_INPUT_MAP)) {
+            abort(404, 'Invalid document type.');
         }
 
+        $details = Driver::FILE_INPUT_MAP[$type];
+        $path = $driver->{$details['column']};
         $disk = Storage::disk('private');
 
-        if (! $disk->exists($driver->photo_path)) {
-            abort(404, 'File not found on disk.');
+        if (is_null($path) || !$disk->exists($path)) {
+            abort(404, 'File not found.');
         }
 
-        return $disk->response($driver->photo_path);
+        return $disk->response($path);
     }
 
+    private function handleFileUploads(Request $request, Driver $driver): void
+    {
+        $disk = Storage::disk('private');
+        foreach (Driver::FILE_INPUT_MAP as $inputName => $details) {
+            if ($request->hasFile($inputName)) {
+                $columnName = $details['column'];
+                $oldPath = $driver->{$columnName};
+
+                // We never delete anything ;)
+                if ($oldPath && $disk->exists($oldPath)) {
+                    $originalFilename = basename($oldPath);
+                    $archivePath = "{$driver->id}/old/" . time() . "_{$originalFilename}";
+                    $disk->move($oldPath, $archivePath);
+                }
+
+                $folder = $driver->id . '/documents';
+                $path = $request->file($inputName)->store($folder, 'private');
+                $driver->{$columnName} = $path;
+            }
+        }
+    }
 
     public function submit(SubmitDriverRequest $request, Driver $driver): RedirectResponse
     {

@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Driver;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use App\Models\Driver;
 
 class UpdateDriverRequest extends FormRequest
 {
@@ -25,13 +25,18 @@ class UpdateDriverRequest extends FormRequest
     public function rules(): array
     {
         $driverId = $this->driver->id;
-        return [
+        $rules = [
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
             'phone_number' => ['nullable', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
             'license_number' => ['nullable', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
             'license_expiry_date' => ['nullable', 'date'],
-            'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
+
+        foreach (array_keys(Driver::FILE_INPUT_MAP) as $inputName) {
+            $rules[$inputName] = ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'];
+        }
+
+        return $rules;
     }
 }

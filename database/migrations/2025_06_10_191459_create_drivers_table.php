@@ -18,7 +18,14 @@ return new class extends Migration
             $table->string('phone_number')->unique()->nullable();
             $table->string('license_number')->unique()->nullable();
             $table->date('license_expiry_date')->nullable();
+
             $table->string('photo_path')->nullable();
+            $table->string('doc_gov_id_path')->nullable();
+            $table->string('doc_residency_card_path')->nullable();
+            $table->string('doc_drivers_license_path')->nullable();
+            $table->string('doc_non_conviction_path')->nullable();
+            $table->string('doc_vehicle_reg_path')->nullable();
+
             $table->enum('status', ['draft', 'pending_approval', 'approved', 'rejected'])->default('draft');
             $table->text('rejection_reason')->nullable();
 
