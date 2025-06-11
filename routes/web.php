@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DriverController;
+use App\Http\Controllers\Admin\UserManagementController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -39,6 +40,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
         Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
         Route::get('/{driver}/photo', [DriverController::class, 'showPhoto'])->name('photo');
-
     });
+
+    // Admin Only //
+    Route::middleware('can:manage-users')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('users', UserManagementController::class);
+    });
+
 });

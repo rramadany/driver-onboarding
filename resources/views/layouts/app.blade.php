@@ -11,6 +11,10 @@
         <ul>
             <li><a href="{{ route('dashboard') }}">Dashboard</a></li>
             <li><a href="{{ route('drivers.index') }}">Drivers</a></li>
+            @can('manage-users')
+                <li><a href="{{ route('admin.users.index') }}">Manage Users</a></li>
+            @endcan
+
 
             <li>
                 <span>Welcome, {{ Auth::user()->name }}</span>
