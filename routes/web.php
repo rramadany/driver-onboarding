@@ -17,14 +17,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::prefix('drivers')->name('drivers.')->group(function () {
-
-        // Level 1 //
-        // Level 1 and 2 overlap at the moment, I think the explicit separation is fine
-        // We could make a guest role in the future
-        Route::get('/', [DriverController::class, 'index'])->name('index');
-        Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
-
-        // Level 2 //
+        // HR & Supervisor & Admin //
         Route::middleware('can:manage-drivers')->group(function () {
             Route::get('/create', [DriverController::class, 'create'])->name('create');
             Route::post('/', [DriverController::class, 'store'])->name('store');
@@ -34,10 +27,17 @@ Route::middleware('auth')->group(function () {
             Route::post('/{driver}/submit', [DriverController::class, 'submit'])->name('submit');
         });
 
-        // Level 3 //
+        // Supervisor & Admin //
         Route::middleware('can:approve-drivers')->group(function () {
             Route::post('/{driver}/approve', [DriverController::class, 'approve'])->name('approve');
             Route::post('/{driver}/reject', [DriverController::class, 'reject'])->name('reject');
         });
+
+        // Everyone //
+        // This overlaps with manage-drivers at the moment, I think the explicit separation is fine
+        // We could make a guest role in the future
+        Route::get('/', [DriverController::class, 'index'])->name('index');
+        Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
+
     });
 });
