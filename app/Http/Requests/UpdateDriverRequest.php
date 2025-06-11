@@ -26,11 +26,11 @@ class UpdateDriverRequest extends FormRequest
     {
         $driverId = $this->driver->id;
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
-            'phone_number' => ['required', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
-            'license_number' => ['required', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
-            'license_expiry_date' => ['required', 'date'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
+            'phone_number' => ['nullable', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
+            'license_number' => ['nullable', 'string', 'max:255', Rule::unique(Driver::class)->ignore($driverId)],
+            'license_expiry_date' => ['nullable', 'date'],
             'photo' => ['nullable', 'image', 'mimes:jpg,png,jpeg', 'max:4096'],
         ];
     }

@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone_number')->unique();
-            $table->string('license_number')->unique();
-            $table->date('license_expiry_date');
+            $table->string('name')->nullable();
+            $table->string('email')->unique()->nullable();
+            $table->string('phone_number')->unique()->nullable();
+            $table->string('license_number')->unique()->nullable();
+            $table->date('license_expiry_date')->nullable();
             $table->string('photo_path')->nullable();
             $table->enum('status', ['draft', 'pending_approval', 'approved', 'rejected'])->default('draft');
             $table->text('rejection_reason')->nullable();
