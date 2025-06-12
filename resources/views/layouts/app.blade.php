@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Onboarding</title>
+    <style> /* Simple styles for the dropdown */
+        .nav-item { display: inline-block; position: relative; margin-right: 20px; }
+        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 300px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; border: 1px solid #ddd;}
+        .dropdown-content li a { color: black; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #eee; }
+        .dropdown-content li a:hover { background-color: #f1f1f1 }
+        .nav-item:hover .dropdown-content { display: block; }
+    </style>
 </head>
 <body>
 
@@ -15,7 +22,25 @@
                 <li><a href="{{ route('admin.users.index') }}">Manage Users</a></li>
             @endcan
 
-
+            <li class="nav-item">
+                <a href="#">Notifications
+                    @if($unreadNotifications->count() > 0)
+                        <strong style="color: red;">({{ $unreadNotifications->count() }})</strong>
+                    @endif
+                </a>
+                <ul class="dropdown-content">
+                    @forelse($unreadNotifications->take(10) as $notification)
+                        <li>
+                            <a href="{{ url($notification->data['url']) }}">
+                                <small>{{ $notification->created_at->diffForHumans() }}</small><br>
+                                {{ $notification->data['message'] }}
+                            </a>
+                        </li>
+                    @empty
+                        <li style="padding: 12px 16px;">No new notifications.</li>
+                    @endforelse
+                </ul>
+            </li>
             <li>
                 <span>Welcome, {{ Auth::user()->name }}</span>
             </li>

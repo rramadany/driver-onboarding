@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\DatabaseNotification;
 
 class Driver extends Model
 {
@@ -19,6 +20,13 @@ class Driver extends Model
         'license_expiry_date',
         // The rest were omitted on purpose
     ];
+
+    protected static function booted(): void
+    {
+        static::deleted(function (Driver $driver) {
+            DatabaseNotification::where('data->driver_id', $driver->id)->delete();
+        });
+    }
 
     public const FILE_INPUT_MAP = [
         'photo' => [

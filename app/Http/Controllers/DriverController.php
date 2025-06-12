@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\User;
 use App\Models\Driver;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,6 +15,10 @@ use App\Http\Requests\RejectDriverRequest;
 use App\Http\Requests\SubmitDriverRequest;
 use Illuminate\Http\RedirectResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Notifications\DriverReviewed;
+use App\Notifications\DriverSubmittedForApproval;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Notifications\DatabaseNotification;
 
 class DriverController extends Controller
 {
@@ -142,6 +147,10 @@ class DriverController extends Controller
         $driver->reviewed_at = null;
         $driver->save();
 
+        // let's not bother admins since this isn't their job :)
+        $supervisors = User::where('role', 'supervisor')->get();
+        Notification::send($supervisors, new DriverSubmittedForApproval($driver));
+
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver submitted for approval.');
     }
 
@@ -158,6 +167,11 @@ class DriverController extends Controller
         $driver->reviewed_at = now();
         $driver->save();
 
+        $driver->createdBy->notify(new DriverReviewed($driver));
+        DatabaseNotification::where('type', DriverSubmittedForApproval::class)
+            ->where('data->driver_id', $driver->id)
+            ->delete();
+
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver approved successfully.');
 
     }
@@ -173,6 +187,12 @@ class DriverController extends Controller
         $driver->reviewed_by = Auth::id();
         $driver->reviewed_at = now();
         $driver->save();
+
+        $driver->createdBy->notify(new DriverReviewed($driver));
+        DatabaseNotification::where('type', DriverSubmittedForApproval::class)
+            ->where('data->driver_id', $driver->id)
+            ->delete();
+
 
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver rejected successfully.');
     }
