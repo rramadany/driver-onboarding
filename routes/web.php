@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\AuditLogController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -45,6 +46,7 @@ Route::middleware('auth')->group(function () {
     // Admin Only //
     Route::middleware('can:manage-users')->prefix('admin')->name('admin.')->group(function () {
         Route::resource('users', UserManagementController::class);
+        Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
     });
 
 });

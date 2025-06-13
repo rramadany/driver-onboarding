@@ -20,6 +20,7 @@
             <li><a href="{{ route('drivers.index') }}">Drivers</a></li>
             @can('manage-users')
                 <li><a href="{{ route('admin.users.index') }}">Manage Users</a></li>
+                <li><a href="{{ route('admin.audit-logs.index') }}">Audit Log</a></li>
             @endcan
 
             <li class="nav-item">
