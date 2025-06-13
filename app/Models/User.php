@@ -30,7 +30,8 @@ class User extends Authenticatable
         public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['name', 'email', 'role'])
+            ->logAll()
+            ->logExcept(['password'])
             ->logOnlyDirty()
             ->setDescriptionForEvent(fn(string $eventName) => "User account was {$eventName}")
             ->dontSubmitEmptyLogs();
