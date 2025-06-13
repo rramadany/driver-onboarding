@@ -24,7 +24,9 @@ class Driver extends Model
     protected static function booted(): void
     {
         static::deleted(function (Driver $driver) {
-            DatabaseNotification::where('data->driver_id', $driver->id)->delete();
+            DatabaseNotification::where('data->driver_id', $driver->id)
+            ->whereNull('read_at')
+            ->delete();
         });
     }
 

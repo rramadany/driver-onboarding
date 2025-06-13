@@ -170,6 +170,7 @@ class DriverController extends Controller
         $driver->createdBy->notify(new DriverReviewed($driver));
         DatabaseNotification::where('type', DriverSubmittedForApproval::class)
             ->where('data->driver_id', $driver->id)
+            ->whereNull('read_at')
             ->delete();
 
         return redirect()->route('drivers.show', $driver)->with('success', 'Driver approved successfully.');
@@ -191,6 +192,7 @@ class DriverController extends Controller
         $driver->createdBy->notify(new DriverReviewed($driver));
         DatabaseNotification::where('type', DriverSubmittedForApproval::class)
             ->where('data->driver_id', $driver->id)
+            ->whereNull('read_at')
             ->delete();
 
 
