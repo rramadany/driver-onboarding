@@ -41,11 +41,12 @@ Route::middleware('auth')->group(function () {
         // We could make a guest role in the future
         Route::get('/', [DriverController::class, 'index'])->name('index');
         Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
+        Route::get('/{driver}/export-pdf', [DriverController::class, 'exportPdf'])->name('export.pdf'); // Add this line
         Route::get('/{driver}/document/{type}', [DriverController::class, 'showDocument'])->name('document.show');
     });
 
     // Everyone//
-    // Maybe we shouldn't have a separate controller for this
+    // I know it looks ugly but I think having a separate controller for bulk exports is a Good Thing
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('/drivers/export/xlsx', [ReportController::class, 'exportDriversXLSX'])->name('drivers.export.xlsx');
         Route::get('/drivers/export/csv', [ReportController::class, 'exportDriversCSV'])->name('drivers.export.csv');

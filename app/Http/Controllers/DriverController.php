@@ -19,6 +19,9 @@ use App\Notifications\DriverReviewed;
 use App\Notifications\DriverSubmittedForApproval;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Notifications\DatabaseNotification;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Spatie\LaravelPdf\Enums\Format;
+use Spatie\Browsershot\Browsershot;
 
 class DriverController extends Controller
 {
@@ -110,6 +113,35 @@ class DriverController extends Controller
         }
 
         return $disk->response($path);
+    }
+
+    public function exportPdf(Driver $driver)
+    {
+        $absoluteImagePaths = [];
+        $disk = Storage::disk('private');
+
+        foreach (Driver::FILE_INPUT_MAP as $key => $details) {
+            $relativePath = $driver->{$details['column']};
+            if ($relativePath && $disk->exists($relativePath)) {
+                $absoluteImagePaths[$key] = $disk->path($relativePath);
+            } else {
+                $absoluteImagePaths[$key] = null;
+            }
+        }
+
+        return Pdf::view('reports.driver_pdf', [
+                'driver' => $driver,
+                'documentMap' => Driver::FILE_INPUT_MAP,
+                'imagePaths' => $absoluteImagePaths
+            ])
+            ->format(Format::A4)
+            ->withBrowsershot(function (Browsershot $browsershot) {
+                // Couldn't find a different way to do this
+                if (env('CHROME_PATH')) {
+                    $browsershot->setChromePath(env('CHROME_PATH'));
+                }
+            })
+            ->name('dossier-' . $driver->id . '.pdf');
     }
 
     private function handleFileUploads(Request $request, Driver $driver): void
