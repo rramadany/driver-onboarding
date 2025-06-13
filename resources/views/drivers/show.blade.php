@@ -53,10 +53,11 @@
     </table>
 
     <hr>
+    <h3>Actions</h3>
+    <a href="{{ route('drivers.export.pdf', $driver) }}">Export Dossier as PDF</a>
     @can('manage-drivers')
-        <h3>Actions</h3>
         @if ($driver->isEditable())
-             <a href="{{ route('drivers.edit', $driver) }}">Edit Profile</a>
+        | <a href="{{ route('drivers.edit', $driver) }}">Edit Profile</a>
              <br><br>
         @endif
         @if($driver->isSubmittable())
