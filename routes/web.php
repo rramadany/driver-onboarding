@@ -16,8 +16,9 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/', function () {
-        return view('dashboard');
+        return redirect()->route('drivers.index');
     })->name('dashboard');
+
 
     Route::prefix('drivers')->name('drivers.')->group(function () {
         // HR & Supervisor & Admin //
@@ -37,11 +38,10 @@ Route::middleware('auth')->group(function () {
         });
 
         // Everyone //
-        // This overlaps with manage-drivers at the moment, I think the explicit separation is fine
-        // We could make a guest role in the future
+        // This overlaps with manage-drivers
         Route::get('/', [DriverController::class, 'index'])->name('index');
         Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
-        Route::get('/{driver}/export-pdf', [DriverController::class, 'exportPdf'])->name('export.pdf'); // Add this line
+        Route::get('/{driver}/export-pdf', [DriverController::class, 'exportPdf'])->name('export.pdf');
         Route::get('/{driver}/document/{type}', [DriverController::class, 'showDocument'])->name('document.show');
     });
 
