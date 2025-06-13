@@ -3,8 +3,10 @@
 @section('content')
     <h1>All Drivers</h1>
 
+    <a href="{{ route('reports.drivers.export.xlsx') }}">Export as XLSX</a>
+    | <a href="{{ route('reports.drivers.export.csv') }}">Export as CSV</a>
     @can('manage-drivers')
-        <a href="{{ route('drivers.create') }}">Create New Driver</a>
+    | <a href="{{ route('drivers.create') }}">Create New Driver</a>
     @endcan
 
     <hr>

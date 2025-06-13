@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DriverController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\AuditLogController;
+use App\Http\Controllers\ReportController;
 
 Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
@@ -41,6 +42,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DriverController::class, 'index'])->name('index');
         Route::get('/{driver}', [DriverController::class, 'show'])->name('show');
         Route::get('/{driver}/document/{type}', [DriverController::class, 'showDocument'])->name('document.show');
+    });
+
+    // Everyone//
+    // Maybe we shouldn't have a separate controller for this
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/drivers/export/xlsx', [ReportController::class, 'exportDriversXLSX'])->name('drivers.export.xlsx');
+        Route::get('/drivers/export/csv', [ReportController::class, 'exportDriversCSV'])->name('drivers.export.csv');
     });
 
     // Admin Only //
