@@ -43,14 +43,16 @@
 @foreach ($documentMap as $key => $details)
     <div class="mb-3">
         <label for="{{ $key }}" class="form-label">{{ $details['label'] }}</label>
-        @if (isset($driver) && $driver->{$details['column']})
-            <div class="mb-2">
-                <a href="{{ route('drivers.document.show', ['driver' => $driver, 'type' => $key]) }}" target="_blank" class="btn btn-secondary btn-sm">View Current File</a>
-            </div>
-        @else
-             <div class="mb-2">
-                <small class="text-muted">No file uploaded.</small>
-             </div>
+        @if (isset($driver))
+            @if (isset($driver) && $driver->{$details['column']})
+                <div class="mb-2">
+                    <a href="{{ route('drivers.document.show', ['driver' => $driver, 'type' => $key]) }}" target="_blank" class="btn btn-secondary btn-sm">View Current File</a>
+                </div>
+            @else
+                <div class="mb-2">
+                    <small class="text-muted">No file uploaded.</small>
+                </div>
+            @endif
         @endif
         <input type="file" id="{{ $key }}" name="{{ $key }}" class="form-control @error($key) is-invalid @enderror">
         @error($key)
