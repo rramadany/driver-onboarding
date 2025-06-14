@@ -24,7 +24,7 @@
         <p><strong>Status:</strong> {{ ucfirst(str_replace('_', ' ', $driver->status)) }}</p>
         <p><strong>Profile Created By:</strong> {{ $driver->createdBy?->name ?? 'N/A' }} on {{ $driver->created_at->format('M d, Y') }}</p>
         @if($driver->reviewed_at)
-            <p><strong>Reviewed By:</strong> {{ $driver->reviewedBy->name }} on {{ $driver->reviewed_at->format('M d, Y') }}</p>
+            <p><strong>Reviewed By:</strong> {{ $driver->reviewedBy?->name ?? 'N/A' }} on {{ $driver->reviewed_at->format('M d, Y') }}</p>
         @endif
         @if($driver->status === 'rejected' && $driver->rejection_reason)
             <p><strong>Rejection Reason:</strong> {{ $driver->rejection_reason }}</p>
