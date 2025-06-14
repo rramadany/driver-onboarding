@@ -4,67 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Onboarding</title>
-    <style> /* Simple styles for the dropdown */
-        .nav-item { display: inline-block; position: relative; margin-right: 20px; }
-        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 300px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; border: 1px solid #ddd;}
-        .dropdown-content li a { color: black; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #eee; }
-        .dropdown-content li a:hover { background-color: #f1f1f1 }
-        .nav-item:hover .dropdown-content { display: block; }
-    </style>
+    @vite(['resources/js/app.js', 'resources/css/app.css']) 
 </head>
 <body>
 
-    <nav>
-        <ul>
-            <li><a href="{{ route('drivers.index') }}">Drivers</a></li>
-            @can('manage-users')
-                <li><a href="{{ route('admin.users.index') }}">Manage Users</a></li>
-                <li><a href="{{ route('admin.audit-logs.index') }}">Audit Log</a></li>
-            @endcan
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
 
-            <li class="nav-item">
-                <a href="#">Notifications
-                    @if($unreadNotifications->count() > 0)
-                        <strong style="color: red;">({{ $unreadNotifications->count() }})</strong>
-                    @endif
-                </a>
-                <ul class="dropdown-content">
-                    @forelse($unreadNotifications->take(10) as $notification)
-                        <li>
-                            <a href="{{ url($notification->data['url']) }}">
-                                <small>{{ $notification->created_at->diffForHumans() }}</small><br>
-                                {{ $notification->data['message'] }}
-                            </a>
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('drivers.index') }}">Drivers</a>
+                    </li>
+                    @can('manage-users')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.users.index') }}">Manage Users</a>
                         </li>
-                    @empty
-                        <li style="padding: 12px 16px;">No new notifications.</li>
-                    @endforelse
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.audit-logs.index') }}">Audit Log</a>
+                        </li>
+                    @endcan
                 </ul>
-            </li>
-            <li>
-                <span>Welcome, {{ Auth::user()->name }}</span>
-            </li>
-            <li>
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button type="submit">Logout</button>
-                </form>
-            </li>
-        </ul>
+
+                {{-- Right-aligned items --}}
+                <ul class="navbar-nav">
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Notifications
+                            @if($unreadNotifications->count() > 0)
+                                <span class="badge bg-danger rounded-pill">{{ $unreadNotifications->count() }}</span>
+                            @endif
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+                            @forelse($unreadNotifications->take(10) as $notification)
+                                <li>
+                                    <a class="dropdown-item" href="{{ url($notification->data['url']) }}">
+                                        <small>{{ $notification->created_at->diffForHumans() }}</small><br>
+                                        {{ $notification->data['message'] }}
+                                    </a>
+                                </li>
+                            @empty
+                                <li><span class="dropdown-item">No new notifications.</span></li>
+                            @endforelse
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <span class="nav-link disabled">{{ Auth::user()->name }}</span>
+                    </li>
+
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}" class="d-flex">
+                            @csrf
+                            <button class="btn btn-link nav-link" type="submit">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
     </nav>
 
-    <hr>
-
-    <main>
+    <main class="container mt-4">
         @if (session('success'))
-            <div style="color: green;">
+            <div class="alert alert-success" role="alert">
                 {{ session('success') }}
             </div>
         @endif
         @if ($errors->any())
-            <div style="color: red;">
-                <strong>Whoops! Something went wrong.</strong>
-                <ul>
+            <div class="alert alert-danger" role="alert">
+                <h4 class="alert-heading">Whoops! Something went wrong.</h4>
+                <ul class="mb-0">
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach

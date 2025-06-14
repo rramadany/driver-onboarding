@@ -8,6 +8,7 @@
         @include('drivers._form', ['submitButtonText' => 'Update Profile'])
     </form>
     
-    <br>
-    <a href="{{ route('drivers.show', $driver) }}">Back to Driver Details</a>
+    <div class="mt-3">
+        <a href="{{ route('drivers.show', $driver) }}" class="btn btn-secondary btn-sm">Back to Driver Details</a>
+    </div>
 @endsection

@@ -1,13 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>User Management</h1>
 
-    <a href="{{ route('admin.users.create') }}">Create New User</a>
-
-    <hr>
-
-    <table border="1" cellpadding="5" cellspacing="0">
+    <h1 class="mb-4">User Management</h1>
+    <div class="mb-3">
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary btn-sm">Create New User</a>
+    </div>
+    <table class="table table-striped table-hover border">
         <thead>
             <tr>
                 <th>ID</th>
@@ -28,8 +27,7 @@
                     <td>{{ $user->created_at->format('M d, Y') }}</td>
                     <td>
                         @if ($user->role !== 'admin')
-                        <a href="{{ route('admin.users.edit', $user) }}">Edit</a>
-                            |
+                        <a href="{{ route('admin.users.edit', $user) }}" class="me-2">Edit</a>
                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                 @csrf
                                 @method('DELETE')

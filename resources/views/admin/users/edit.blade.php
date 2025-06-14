@@ -8,6 +8,7 @@
         @include('admin.users._form', ['submitButtonText' => 'Update User'])
     </form>
     
-    <br>
-    <a href="{{ route('admin.users.index') }}">Back to Users List</a>
+    <div class="mt-3">
+        <a href="{{ route('admin.users.index') }}" class="btn btn-secondary btn-sm">Back to Users List</a>
+    </div>
 @endsection
