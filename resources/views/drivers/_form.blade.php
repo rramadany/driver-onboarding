@@ -44,7 +44,7 @@
     <div class="mb-3">
         <label for="{{ $key }}" class="form-label">{{ $details['label'] }}</label>
         @if (isset($driver))
-            @if (isset($driver) && $driver->{$details['column']})
+            @if ($driver->{$details['column']})
                 <div class="mb-2">
                     <a href="{{ route('drivers.document.show', ['driver' => $driver, 'type' => $key]) }}" target="_blank" class="btn btn-secondary btn-sm">View Current File</a>
                 </div>
