@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Driver Onboarding</title>
+    @vite(['resources/js/app.js', 'resources/css/app.css']) 
     <style> /* Simple styles for the dropdown */
         .nav-item { display: inline-block; position: relative; margin-right: 20px; }
         .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 300px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; list-style: none; padding: 0; border: 1px solid #ddd;}
