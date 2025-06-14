@@ -7,6 +7,7 @@
         @include('drivers._form', ['submitButtonText' => 'Create Profile'])
     </form>
 
-    <br>
-    <a href="{{ route('drivers.index') }}">Back to Drivers List</a>
+    <div class="mt-3">
+        <a href="{{ route('drivers.index') }}" class="btn btn-secondary btn-sm">Back to Drivers List</a>
+    </div>
 @endsection

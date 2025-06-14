@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
-    <h1>System Audit Log</h1>
 
-    <hr>
+    <h1 class="mb-4">System Audit Log</h1>
 
-    <table class="table table-striped table-hover text-break">
+    <table class="table table-striped table-hover text-break border">
         <thead>
             <tr>
                 <th class="w-15">Timestamp</th>
@@ -25,47 +24,50 @@
                     <td>{{ $activity->causer->name ?? '[Deleted User]' }} <br> {{ 'ID: ' . $activity->causer_id }}</td>
                     <td>{{ $activity->description }}</td>
                     <td>
-                        <p>
-                            <strong>Subject:</strong>
-                            {{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}
-                            @if($subjectName) ({{ $subjectName }}) @endif
+                        <p class="mb-1">
+                            <small class="text-muted">
+                                <strong>Subject:</strong>
+                                {{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}
+                                @if($subjectName) ({{ $subjectName }}) @endif
+                            </small>
                         </p>
+
 
                         @switch($activity->event)
                             @case('created')
-                                <strong>Created Data:</strong>
-                                <ul>
+                            <strong>Created Data:</strong>
+                                <ul class="list-unstyled mb-0">
                                     @foreach($properties->get('attributes') as $key => $value)
-                                        <li><strong>{{$key}}</strong> "{{ $value }}"</li>
+                                        <li><strong>{{$key}}:</strong> <span class="text-success">{{ $value }}</span></li>
                                     @endforeach
                                 </ul>
-                                @break
+                            @break
 
                             @case('updated')
                                 <strong>Changes:</strong>
-                                <ul>
+                                <ul class="list-unstyled mb-0">
                                     @foreach($properties->get('attributes') as $key => $value)
-                                        @php $oldValue = $properties->get('old')[$key] ?? null; @endphp
+                                        @php $oldValue = $properties->get('old')[$key] ?? 'N/A'; @endphp 
                                         <li>
                                             <strong>{{$key}}:</strong>
-                                            <span style="color: #dc3545; text-decoration: line-through;">"{{ $oldValue }}"</span>
+                                            <span class="text-danger text-decoration-line-through">{{ $oldValue }}</span>
                                             →
-                                            <span style="color: #28a745;">"{{ $value }}"</span>
+                                            <span class="text-success">{{ $value }}</span>
                                         </li>
                                     @endforeach
                                 </ul>
-                                @break
+                            @break
 
                             @case('deleted')
                                 <strong>Deleted Snapshot:</strong>
-                                <ul>
+                                <ul class="list-unstyled mb-0">
                                     @foreach($properties->get('old') as $key => $value)
                                         @if(in_array($key, ['name', 'email', 'status', 'license_number']))
-                                            <li><strong>{{$key}}:</strong> "{{ $value ?? 'N/A' }}"</li>
+                                            <li><strong>{{$key}}:</strong> <span class="text-muted">{{ $value ?? 'N/A' }}</span></li>
                                         @endif
                                     @endforeach
                                 </ul>
-                                @break
+                            @break
 
                         @endswitch
                     </td>
