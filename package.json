@@ -4,7 +4,8 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+    	"heroku-postbuild": "npm run build && mkdir ./.cache && mv /app/.cache/puppeteer ./.cache"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.8",
@@ -15,5 +16,8 @@
         "laravel-vite-plugin": "^1.2.0",
         "tailwindcss": "^4.0.0",
         "vite": "^6.2.4"
+    },
+    "dependencies": {
+        "puppeteer": "^24.10.1"
     }
 }

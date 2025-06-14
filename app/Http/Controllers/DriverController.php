@@ -106,7 +106,7 @@ class DriverController extends Controller
 
         $details = Driver::FILE_INPUT_MAP[$type];
         $path = $driver->{$details['column']};
-        $disk = Storage::disk('private');
+        $disk = Storage::disk();
 
         if (is_null($path) || !$disk->exists($path)) {
             abort(404, 'File not found.');
@@ -117,25 +117,32 @@ class DriverController extends Controller
 
     public function exportPdf(Driver $driver)
     {
-        $absoluteImagePaths = [];
-        $disk = Storage::disk('private');
+        $imageUrls = [];
+        $disk = Storage::disk();
 
         foreach (Driver::FILE_INPUT_MAP as $key => $details) {
             $relativePath = $driver->{$details['column']};
             if ($relativePath && $disk->exists($relativePath)) {
-                $absoluteImagePaths[$key] = $disk->path($relativePath);
+                if (env('FILESYSTEM_DISK') === 's3') {
+                    $imageUrls[$key] = $disk->temporaryUrl($relativePath, now()->addMinutes(3));
+                } else {
+                    $imageUrls[$key] = $disk->path($relativePath);
+                }
             } else {
-                $absoluteImagePaths[$key] = null;
+                $imageUrls[$key] = null;
             }
         }
 
         return Pdf::view('reports.driver_pdf', [
                 'driver' => $driver,
                 'documentMap' => Driver::FILE_INPUT_MAP,
-                'imagePaths' => $absoluteImagePaths
+                'imagePaths' => $imageUrls
             ])
             ->format(Format::A4)
             ->withBrowsershot(function (Browsershot $browsershot) {
+                if (env('PLATFORM') === 'heroku') {
+                    $browsershot->noSandbox();
+                }
                 // Couldn't find a different way to do this
                 if (env('CHROME_PATH')) {
                     $browsershot->setChromePath(env('CHROME_PATH'));
@@ -146,7 +153,7 @@ class DriverController extends Controller
 
     private function handleFileUploads(Request $request, Driver $driver): void
     {
-        $disk = Storage::disk('private');
+        $disk = Storage::disk();
         foreach (Driver::FILE_INPUT_MAP as $inputName => $details) {
             if ($request->hasFile($inputName)) {
                 $columnName = $details['column'];
@@ -160,7 +167,7 @@ class DriverController extends Controller
                 }
 
                 $folder = $driver->id . '/documents';
-                $path = $request->file($inputName)->store($folder, 'private');
+                $path = $disk->putFile($folder, $request->file($inputName));
                 $driver->{$columnName} = $path;
             }
         }
