@@ -31,7 +31,7 @@ class User extends Authenticatable
     {
         return LogOptions::defaults()
             ->logAll()
-            ->logExcept(['password'])
+            ->logExcept(['password', 'remember_token'])
             ->logOnlyDirty()
             ->setDescriptionForEvent(fn(string $eventName) => "User account was {$eventName}")
             ->dontSubmitEmptyLogs();
