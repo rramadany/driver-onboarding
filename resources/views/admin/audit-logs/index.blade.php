@@ -5,13 +5,13 @@
 
     <hr>
 
-    <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+    <table class="table table-striped table-hover text-break">
         <thead>
             <tr>
-                <th style="width: 15%;">Timestamp</th>
-                <th style="width: 15%;">User</th>
-                <th style="width: 20%;">Action</th>
-                <th style="width: 50%;">Details</th>
+                <th class="w-15">Timestamp</th>
+                <th class="w-15">User</th>
+                <th class="w-20">Action</th>
+                <th class="w-50">Details</th>
             </tr>
         </thead>
         <tbody>

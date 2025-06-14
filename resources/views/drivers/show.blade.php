@@ -28,7 +28,7 @@
     <hr>
 
     <h3>Document Status</h3>
-    <table border="1" cellpadding="5" cellspacing="0" style="width: 100%;">
+    <table class="table-bordered">
         <thead>
             <tr>
                 <th>Document Type</th>
