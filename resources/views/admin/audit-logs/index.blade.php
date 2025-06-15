@@ -21,7 +21,7 @@
                 @endphp
                 <tr>
                     <td>{{ $activity->created_at->format('Y-m-d H:i:s') }}</td>
-                    <td>{{ $activity->causer->name ?? '[Deleted User]' }} <br> {{ 'ID: ' . $activity->causer_id }}</td>
+                    <td>{{ $activity->causer->name ?? ($activity->causer_id ? '[Deleted User]' : '[Server Admin]') }} <br> {{ 'ID: ' . $activity->causer_id }}</td>
                     <td>{{ $activity->description }}</td>
                     <td>
                         <p class="mb-1">
