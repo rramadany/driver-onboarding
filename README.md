@@ -1,61 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+This is a simple but opinionated driver onboarding application with multi-user support, permissions, notifications, data exports (CSV/XLSX/PDF), among other things. It is especially focused on auditability: it features a comprehensive audit log, and if something gets in, it never gets out.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+The code was written to be easily digestable, sometimes at the risk of going against "best practices" (denormalization, view/controller bloat, ...). It uses Laravel 12 (with Bootstrap 5 for styling). 
 
-## About Laravel
+### Permission model
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The app features 3 user roles: `admin`, `supervisor`, and `hr`.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- `hr`: Can CRUD drivers and submit drafts for approval.
+- `supervisor`: Can do everything `hr` can, in addition to reviewing (approving/rejecting) driver drafts.
+- `admin`: Can do everything `supervisor` can, in addition to managing non-admin user accounts and viewing the audit log.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Workflow
 
-## Learning Laravel
+Drivers are created as drafts by default, you don't have to fill in all of their data at once (but the data you enter will be validated). In fact, you could leave all fields empty and you would still get a driver.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+<img src="screenshots/create_driver.png" width=50%>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Once everything has been filled in, you can click the `Submit for Approval` button, which notifies all supervisors (but not admins).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+<img src="screenshots/driver_rev.png" width=50%>
 
-## Laravel Sponsors
+Notifications are smart: you don't have to click on them to dismiss them, all it takes is going to the driver's page (directly or indirectly). They also go away if a driver is deleted or has been reviewed by a different user.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+<img src="screenshots/notif.png" width=50%>
 
-### Premium Partners
+The creator is notified once the driver is reviewed.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+<img src="screenshots/notif2.png" width=50%>
 
-## Contributing
+Rejected drivers can be resubmitted for approval. There's always hope.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+You can generate a dossier for each individual driver as a PDF.
 
-## Code of Conduct
+<img src="screenshots/dossier.png" width=50%>
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+You can also get a bulk export CSV/XLSX, which looks like this:
 
-## Security Vulnerabilities
+```
+"id","name","email","phone_number","license_number","license_expiry_date","photo_path","doc_gov_id_path","doc_residency_card_path","doc_drivers_license_path","doc_non_conviction_path","doc_vehicle_reg_path","status","rejection_reason","created_by","submitted_at","reviewed_by","reviewed_at","deleted_at","created_at","updated_at"
+"1","Driver H","driver@driver.example","1111","2222","1992-03-03 00:00:00","Uploaded","Uploaded","Uploaded","Uploaded","Uploaded","Uploaded","Approved","","Admin","2025-06-15 01:35:39","Supervisor","2025-06-15 01:38:41","","2025-06-15 01:32:51","2025-06-15 01:38:41"
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Here's what the audit log looks like:
 
-## License
+<img src="screenshots/audit.png" width=50%>
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+And here's the user management portal:
+
+<img src="screenshots/manage-users.png" width=50%>
+
+### What's Missing
+
+Given the small scale and scope of this project, many things were left out, including, but not limited to:
+
+- Caching
+- Ratelimiting
+- Customization
+- Testing
+- Searching/Filtering
+- Live updates
+- Indexing
+- In-depth validation
+- Pruning
+
+### Deployment on Heroku
+
+You need to include the following buildpacks (in order):
+
+- jontewks/puppeteer
+- heroku/nodejs
+- heroku/php
+
+Set these environment variables:
+
+```
+DB_CONNECTION=mysql
+FILESYSTEM_DISK=s3
+PLATFORM=heroku
+```
+
+Then fill and set these:
+
+```
+APP_KEY (php artisan key:generate --show)
+AWS_ACCESS_KEY_ID
+AWS_BUCKET
+AWS_REGION
+AWS_SECRET_ACCESS_KEY
+DB_USERNAME
+DB_PASSWORD
+DB_HOST
+DB_PORT
+DB_DATABASE
+```
+
+Then deploy, run the following commands and log in:
+
+```
+heroku run php artisan migrate -a heroku_app_name
+heroku run php artisan app:create-admin-user -a heroku_app_name
+```
+
+If needed, you can also run:
+```
+heroku run php artisan app:delete-admin-user -a heroku_app_name
+```
